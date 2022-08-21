@@ -39,9 +39,10 @@ public class ApplicationService {
     QuestionnaireRepository questionnaireRepository;
 
     @Transactional
-    public Participant createParticipant(String tool) {
+    public Participant createParticipant(String tool, String project) {
         Participant participant = new Participant();
         participant.setTool(tool);
+        participant.setProject(project);
         participantRepository.save(participant);
         return participant;
     }
@@ -49,12 +50,14 @@ public class ApplicationService {
     @Transactional
     public Participant initiateReview(String id) {
         Participant participant = participantRepository.findParticipantById(id);
-        List<Integer> riskLevelList = Arrays.asList(1, 2, 3);
-        for (Integer riskLevel : riskLevelList) {
-            List<Change> changesByRiskLevel = changeRepository.findAllByRiskLevel(riskLevel);
-            Change randomChangeByRiskLevel = changesByRiskLevel.get(new Random().nextInt(changesByRiskLevel.size()));
+        String project = participant.getProject();
+        List<Change> changes = changeRepository.findAllByProject(project);
+        for (int i = 0; i < 3; i++) {
+            int randomIndex = new Random().nextInt(changes.size());
+            Change randomChange = changes.get(randomIndex);
+            changes.remove(randomIndex);
             ChangeReview changeReview = new ChangeReview();
-            changeReview.setChange(randomChangeByRiskLevel);
+            changeReview.setChange(randomChange);
             changeReview.setParticipant(participant);
             changeReviewRepository.save(changeReview);
         }
@@ -80,8 +83,16 @@ public class ApplicationService {
     }
 
     @Transactional
-    public ChangeReview createCodeInspection(Integer reviewId, List<CodeInspectionDto> codeInspections) {
+    public void updateTaskATime(String participantId, Integer time) {
+        Participant participant = participantRepository.findParticipantById(participantId);
+        participant.setTaskATime(time);
+        participantRepository.save(participant);
+    }
+
+    @Transactional
+    public ChangeReview createCodeInspection(Integer reviewId, Integer reviewTime, List<CodeInspectionDto> codeInspections) {
         ChangeReview changeReview = changeReviewRepository.findChangeReviewById(reviewId);
+        changeReview.setReviewTime(reviewTime);
         for (CodeInspectionDto codeInspectionDto : codeInspections) {
             CodeInspection codeInspection = new CodeInspection();
             codeInspection.setFile(codeInspectionDto.getFile());

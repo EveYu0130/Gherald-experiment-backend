@@ -8,11 +8,17 @@ import java.util.List;
 public class ParticipantDto {
     private String id;
     private String tool;
+
+    private String project;
+
+    private Integer taskATime;
     private List<ChangeReviewDto> changeReviews;
 
-    public ParticipantDto(String id, String tool, List<ChangeReviewDto> changeReviews) {
+    public ParticipantDto(String id, String tool, String project, Integer taskATime, List<ChangeReviewDto> changeReviews) {
         this.id = id;
         this.tool = tool;
+        this.project = project;
+        this.taskATime = taskATime;
         this.changeReviews = changeReviews;
     }
 
@@ -30,6 +36,22 @@ public class ParticipantDto {
 
     public void setTool(String tool) {
         this.tool = tool;
+    }
+
+    public String getProject() {
+        return project;
+    }
+
+    public void setProject(String project) {
+        this.project = project;
+    }
+
+    public Integer getTaskATime() {
+        return taskATime;
+    }
+
+    public void setTaskATime(Integer taskATime) {
+        this.taskATime = taskATime;
     }
 
     public List<ChangeReviewDto> getChangeReviews() {

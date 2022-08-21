@@ -10,13 +10,11 @@ public class Change {
     @Id
     private String id;
 
-    private String project;
+    private String repo;
 
     private String branch;
 
     private String subject;
-
-    private String status;
 
     private String created;
 
@@ -31,11 +29,18 @@ public class Change {
     private Integer number;
 
     private String parent;
-
-    private Integer riskLevel;
-
     @Column(columnDefinition = "LONGTEXT")
     private String commitMsg;
+
+    private String project;
+
+    private Integer authorPriorChanges;
+
+    private Integer authorPriorBugs;
+
+    private Float riskScore;
+
+    private Float bugDensity;
 
     @OneToMany(mappedBy = "change", cascade = CascadeType.ALL)
     private List<File> files;
@@ -54,12 +59,12 @@ public class Change {
         this.id = id;
     }
 
-    public String getProject() {
-        return project;
+    public String getRepo() {
+        return repo;
     }
 
-    public void setProject(String project) {
-        this.project = project;
+    public void setRepo(String repo) {
+        this.repo = repo;
     }
 
     public String getBranch() {
@@ -76,14 +81,6 @@ public class Change {
 
     public void setSubject(String subject) {
         this.subject = subject;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public String getCreated() {
@@ -166,12 +163,44 @@ public class Change {
         this.commitMsg = commitMsg;
     }
 
-    public Integer getRiskLevel() {
-        return riskLevel;
+    public String getProject() {
+        return project;
     }
 
-    public void setRiskLevel(Integer riskLevel) {
-        this.riskLevel = riskLevel;
+    public void setProject(String project) {
+        this.project = project;
+    }
+
+    public Integer getAuthorPriorChanges() {
+        return authorPriorChanges;
+    }
+
+    public void setAuthorPriorChanges(Integer authorPriorChanges) {
+        this.authorPriorChanges = authorPriorChanges;
+    }
+
+    public Integer getAuthorPriorBugs() {
+        return authorPriorBugs;
+    }
+
+    public void setAuthorPriorBugs(Integer authorPriorBugs) {
+        this.authorPriorBugs = authorPriorBugs;
+    }
+
+    public Float getRiskScore() {
+        return riskScore;
+    }
+
+    public void setRiskScore(Float riskScore) {
+        this.riskScore = riskScore;
+    }
+
+    public Float getBugDensity() {
+        return bugDensity;
+    }
+
+    public void setBugDensity(Float bugDensity) {
+        this.bugDensity = bugDensity;
     }
 
     public List<ChangeReview> getReviews() {

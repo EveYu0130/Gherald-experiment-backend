@@ -8,5 +8,6 @@ import java.util.List;
 public interface ChangeRepository extends CrudRepository<Change, String> {
 
     Change findChangeById(String id);
-    List<Change> findAllByRiskLevel(Integer riskLevel);
+    List<Change> findAllByProject(String project);
+
 }

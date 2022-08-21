@@ -20,8 +20,8 @@ public class ParticipantController {
     private ApplicationService applicationService;
 
     @PostMapping("/api/participants/add")
-    public ParticipantDto createParticipant(@RequestParam String tool) {
-        Participant participant = applicationService.createParticipant(tool);
+    public ParticipantDto createParticipant(@RequestParam String tool, @RequestParam String project) {
+        Participant participant = applicationService.createParticipant(tool, project);
         return convertToDto(participant);
     }
 
@@ -52,13 +52,16 @@ public class ParticipantController {
 //    }
 
     @PostMapping("/api/risk-assessment")
-    public void updateRiskLevel(@RequestBody List<ChangeReviewDto> changeReviews) {
+    public void submitTaskA(@RequestBody ParticipantDto participant) {
+        Integer taskATime = participant.getTaskATime();
+        applicationService.updateTaskATime(participant.getId(), taskATime);
+        List<ChangeReviewDto> changeReviews = participant.getChangeReviews();
         applicationService.updateRiskLevel(changeReviews);
     }
 
     @PostMapping("/api/code-review")
     public ChangeReviewDto createCodeInspection(@RequestBody ChangeReviewDto changeReviewDto) {
-        ChangeReview changeReview = applicationService.createCodeInspection(changeReviewDto.getId(), changeReviewDto.getCodeInspections());
+        ChangeReview changeReview = applicationService.createCodeInspection(changeReviewDto.getId(), changeReviewDto.getReviewTime(), changeReviewDto.getCodeInspections());
         return convertToDto(changeReview);
     }
 
@@ -68,13 +71,14 @@ public class ParticipantController {
     }
 
     private ParticipantDto convertToDto(Participant participant)  {
+        Integer taskATime = (participant.getTaskATime() == null) ? null : participant.getTaskATime();
         List<ChangeReviewDto> changeReviews = new ArrayList<>();
         if (participant.getChangeReviews() != null) {
             for (ChangeReview changeReview : participant.getChangeReviews()) {
                 changeReviews.add(convertToDto(changeReview));
             }
         }
-        ParticipantDto participantDto = new ParticipantDto(participant.getId(), participant.getTool(), changeReviews);
+        ParticipantDto participantDto = new ParticipantDto(participant.getId(), participant.getTool(), participant.getProject(), taskATime, changeReviews);
         return participantDto;
     }
 
@@ -82,20 +86,33 @@ public class ParticipantController {
         if (change == null) {
             return null;
         }
-        ChangeDto changeDto = new ChangeDto(change.getId(), change.getProject(), change.getBranch(), change.getSubject(), change.getStatus(), change.getCreated(), change.getUpdated(), change.getInsertions(), change.getDeletions(), change.getNumber(), change.getParent(), change.getCommitMsg(), change.getRiskLevel());
+        ChangeDto changeDto = new ChangeDto(change.getId(), change.getRepo(), change.getBranch(), change.getSubject(), change.getCreated(), change.getUpdated(), change.getInsertions(), change.getDeletions(), change.getNumber(), change.getParent(), change.getCommitMsg(), change.getProject(), change.getAuthorPriorChanges(), change.getAuthorPriorBugs(), change.getRiskScore(), change.getBugDensity());
         List<FileDto> files = new ArrayList<>();
         for (File file : change.getFiles()) {
-            FileDto fileDto = new FileDto(file.getFilename(), file.getStatus(), file.getInsertions(), file.getDeletions(), file.getCodeA(), file.getCodeB());
+            FileDto fileDto = new FileDto(file.getFilename(), file.getStatus(), file.getInsertions(), file.getDeletions(), file.getCodeA(), file.getCodeB(), file.getDiff(), file.getPriorBugs(), file.getPriorChanges());
+            List<MethodDto> methods = new ArrayList<>();
+            for (Method method : file.getMethods()) {
+                MethodDto methodDto = new MethodDto(method.getName(), method.getStartLine(), method.getEndLine(), method.getPriorChanges(), method.getPriorBugs());
+                methods.add(methodDto);
+            }
+            fileDto.setMethods(methods);
+            List<LineDto> lines = new ArrayList<>();
+            for (Line line : file.getLines()) {
+                LineDto lineDto = new LineDto(line.getLineNumber(), line.getCode(), line.getRiskScore());
+                lines.add(lineDto);
+            }
+            fileDto.setLines(lines);
             files.add(fileDto);
         }
         changeDto.setFiles(files);
-        AuthorDto authorDto = new AuthorDto(change.getAuthor().getAccountId(), change.getAuthor().getName(), change.getAuthor().getEmail(), change.getAuthor().getUsername());
+        AuthorDto authorDto = new AuthorDto(change.getAuthor().getAccountId(), change.getAuthor().getName(), change.getAuthor().getEmail(), change.getAuthor().getUsername(), change.getAuthor().getProject());
         changeDto.setAuthor(authorDto);
         return changeDto;
     }
 
     private ChangeReviewDto convertToDto(ChangeReview changeReview) {
         Integer riskLevel = (changeReview.getRiskLevel() == null) ? null : changeReview.getRiskLevel();
+        Integer reviewTime = (changeReview.getReviewTime() == null) ? null : changeReview.getReviewTime();
         ChangeDto change = convertToDto(changeReview.getChange());
         List<CodeInspectionDto> codeInspections = new ArrayList<>();
         if (changeReview.getCodeInspections() != null) {
@@ -103,7 +120,7 @@ public class ParticipantController {
                 codeInspections.add(convertToDto(codeInspection));
             }
         }
-        ChangeReviewDto changeReviewDto = new ChangeReviewDto(changeReview.getId(), change, riskLevel, codeInspections);
+        ChangeReviewDto changeReviewDto = new ChangeReviewDto(changeReview.getId(), change, riskLevel, reviewTime, codeInspections);
         return changeReviewDto;
     }
 
