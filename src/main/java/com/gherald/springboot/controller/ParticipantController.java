@@ -22,14 +22,16 @@ public class ParticipantController {
     @PostMapping("/api/participants/add")
     public ParticipantDto createParticipant(@RequestParam String tool, @RequestParam String project) {
         Participant participant = applicationService.createParticipant(tool, project);
+        String id = participant.getId();
+        participant = applicationService.initiateReview(id);
         return convertToDto(participant);
     }
 
-    @PostMapping("/api/participants/{id}")
-    public ParticipantDto initiateReview(@PathVariable String id) {
-        Participant participant = applicationService.initiateReview(id);
-        return convertToDto(participant);
-    }
+//    @PostMapping("/api/participants/{id}")
+//    public ParticipantDto initiateReview(@PathVariable String id) {
+//        Participant participant = applicationService.initiateReview(id);
+//        return convertToDto(participant);
+//    }
 
     @GetMapping("/api/participants")
     public List<ParticipantDto> getParticipants() {
