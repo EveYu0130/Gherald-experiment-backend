@@ -12,13 +12,16 @@ public class ParticipantDto {
     private String project;
 
     private Integer taskATime;
+
+    private Boolean completed;
     private List<ChangeReviewDto> changeReviews;
 
-    public ParticipantDto(String id, String tool, String project, Integer taskATime, List<ChangeReviewDto> changeReviews) {
+    public ParticipantDto(String id, String tool, String project, Integer taskATime, Boolean completed, List<ChangeReviewDto> changeReviews) {
         this.id = id;
         this.tool = tool;
         this.project = project;
         this.taskATime = taskATime;
+        this.completed = completed;
         this.changeReviews = changeReviews;
     }
 
@@ -52,6 +55,14 @@ public class ParticipantDto {
 
     public void setTaskATime(Integer taskATime) {
         this.taskATime = taskATime;
+    }
+
+    public Boolean getCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(Boolean completed) {
+        this.completed = completed;
     }
 
     public List<ChangeReviewDto> getChangeReviews() {

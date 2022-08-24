@@ -80,7 +80,7 @@ public class ParticipantController {
                 changeReviews.add(convertToDto(changeReview));
             }
         }
-        ParticipantDto participantDto = new ParticipantDto(participant.getId(), participant.getTool(), participant.getProject(), taskATime, changeReviews);
+        ParticipantDto participantDto = new ParticipantDto(participant.getId(), participant.getTool(), participant.getProject(), taskATime, participant.getCompleted(), changeReviews);
         return participantDto;
     }
 

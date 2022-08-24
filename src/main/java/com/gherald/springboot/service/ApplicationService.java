@@ -43,6 +43,7 @@ public class ApplicationService {
         Participant participant = new Participant();
         participant.setTool(tool);
         participant.setProject(project);
+        participant.setCompleted(false);
         participantRepository.save(participant);
         return participant;
     }
@@ -106,8 +107,10 @@ public class ApplicationService {
 
     @Transactional
     public void createQuestionnaire(QuestionnaireDto questionnaireDto) {
-        if (questionnaireRepository.findQuestionnaireByParticipantId(questionnaireDto.getParticipantId()) == null) {
-            Participant participant = participantRepository.findParticipantById(questionnaireDto.getParticipantId());
+        Participant participant = participantRepository.findParticipantById(questionnaireDto.getParticipantId());
+        participant.setCompleted(true);
+        participantRepository.save(participant);
+        if (questionnaireRepository.findQuestionnaireByParticipantId(participant.getId()) == null) {
             Questionnaire questionnaire = new Questionnaire();
             questionnaire.setUnderstandability(questionnaireDto.getUnderstandability());
             questionnaire.setDifficulty(questionnaireDto.getDifficulty());
