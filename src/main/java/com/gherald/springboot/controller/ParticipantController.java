@@ -22,6 +22,8 @@ public class ParticipantController {
     @PostMapping("/api/participants/add")
     public ParticipantDto createParticipant(@RequestParam String tool, @RequestParam String project) {
         Participant participant = applicationService.createParticipant(tool, project);
+        String id = participant.getId();
+        participant = applicationService.initiateReview(id);
         return convertToDto(participant);
     }
 
@@ -78,7 +80,7 @@ public class ParticipantController {
                 changeReviews.add(convertToDto(changeReview));
             }
         }
-        ParticipantDto participantDto = new ParticipantDto(participant.getId(), participant.getTool(), participant.getProject(), taskATime, changeReviews);
+        ParticipantDto participantDto = new ParticipantDto(participant.getId(), participant.getTool(), participant.getProject(), taskATime, participant.getCompleted(), changeReviews);
         return participantDto;
     }
 

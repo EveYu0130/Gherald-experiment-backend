@@ -19,6 +19,8 @@ public class Participant {
 
     private Integer taskATime;
 
+    private Boolean completed;
+
     @OneToMany(mappedBy = "participant", cascade = CascadeType.ALL)
     private List<ChangeReview> changeReviews;
 
@@ -55,6 +57,14 @@ public class Participant {
 
     public void setTaskATime(Integer taskATime) {
         this.taskATime = taskATime;
+    }
+
+    public Boolean getCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(Boolean completed) {
+        this.completed = completed;
     }
 
     public List<ChangeReview> getChangeReviews() {
