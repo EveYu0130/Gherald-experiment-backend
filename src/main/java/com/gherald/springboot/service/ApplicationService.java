@@ -53,7 +53,7 @@ public class ApplicationService {
         Participant participant = participantRepository.findParticipantById(id);
         String project = participant.getProject();
         List<Change> changes = changeRepository.findAllByProject(project);
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 6; i++) {
             int randomIndex = new Random().nextInt(changes.size());
             Change randomChange = changes.get(randomIndex);
             changes.remove(randomIndex);
