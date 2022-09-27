@@ -12,10 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class ApplicationService {
@@ -45,24 +42,35 @@ public class ApplicationService {
         participant.setProject(project);
         participant.setCompleted(false);
         participantRepository.save(participant);
+        initiateReview(participant.getId());
         return participant;
     }
 
     @Transactional
-    public Participant initiateReview(String id) {
+    public void initiateReview(String id) {
         Participant participant = participantRepository.findParticipantById(id);
         String project = participant.getProject();
-        List<Change> changes = changeRepository.findAllByProject(project);
-        for (int i = 0; i < 6; i++) {
-            int randomIndex = new Random().nextInt(changes.size());
-            Change randomChange = changes.get(randomIndex);
-            changes.remove(randomIndex);
+        List<Change> practiceChanges = changeRepository.findAllByProjectAndPractice(project, true);
+        List<Change> experimentChanges = changeRepository.findAllByProjectAndPractice(project, false);
+        Set<Integer> authorIds = new HashSet<>();
+        for (Change practiceChange : practiceChanges) {
             ChangeReview changeReview = new ChangeReview();
-            changeReview.setChange(randomChange);
+            changeReview.setChange(practiceChange);
             changeReview.setParticipant(participant);
             changeReviewRepository.save(changeReview);
         }
-        return participant;
+        while (authorIds.size() < 3) {
+            int randomIndex = new Random().nextInt(experimentChanges.size());
+            Change randomChange = experimentChanges.get(randomIndex);
+            if (!authorIds.contains(randomChange.getAuthor().getAccountId())) {
+                experimentChanges.remove(randomIndex);
+                ChangeReview changeReview = new ChangeReview();
+                changeReview.setChange(randomChange);
+                changeReview.setParticipant(participant);
+                changeReviewRepository.save(changeReview);
+                authorIds.add(randomChange.getAuthor().getAccountId());
+            }
+        }
     }
 
 //    @Transactional

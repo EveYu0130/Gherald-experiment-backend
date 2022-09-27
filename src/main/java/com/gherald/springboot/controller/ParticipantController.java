@@ -22,16 +22,16 @@ public class ParticipantController {
     @PostMapping("/api/participants/add")
     public ParticipantDto createParticipant(@RequestParam String tool, @RequestParam String project) {
         Participant participant = applicationService.createParticipant(tool, project);
-        String id = participant.getId();
-        participant = applicationService.initiateReview(id);
+//        String id = participant.getId();
+//        participant = applicationService.initiateReview(id);
         return convertToDto(participant);
     }
 
-    @PostMapping("/api/participants/{id}")
-    public ParticipantDto initiateReview(@PathVariable String id) {
-        Participant participant = applicationService.initiateReview(id);
-        return convertToDto(participant);
-    }
+//    @PostMapping("/api/participants/{id}")
+//    public ParticipantDto initiateReview(@PathVariable String id) {
+//        Participant participant = applicationService.initiateReview(id);
+//        return convertToDto(participant);
+//    }
 
     @GetMapping("/api/participants")
     public List<ParticipantDto> getParticipants() {
@@ -88,7 +88,7 @@ public class ParticipantController {
         if (change == null) {
             return null;
         }
-        ChangeDto changeDto = new ChangeDto(change.getId(), change.getRepo(), change.getBranch(), change.getSubject(), change.getCreated(), change.getUpdated(), change.getInsertions(), change.getDeletions(), change.getNumber(), change.getParent(), change.getCommitMsg(), change.getProject(), change.getAuthorPriorChanges(), change.getAuthorPriorBugs(), change.getRiskScore(), change.getBugDensity());
+        ChangeDto changeDto = new ChangeDto(change.getId(), change.getRepo(), change.getBranch(), change.getSubject(), change.getCreated(), change.getUpdated(), change.getInsertions(), change.getDeletions(), change.getNumber(), change.getParent(), change.getCommitMsg(), change.getProject(), change.getAuthorPriorChanges(), change.getAuthorPriorBugs(), change.getRiskScore(), change.getBugDensity(), change.getPractice());
         List<FileDto> files = new ArrayList<>();
         for (File file : change.getFiles()) {
             FileDto fileDto = new FileDto(file.getFilename(), file.getStatus(), file.getInsertions(), file.getDeletions(), file.getCodeA(), file.getCodeB(), file.getDiff(), file.getPriorBugs(), file.getPriorChanges());

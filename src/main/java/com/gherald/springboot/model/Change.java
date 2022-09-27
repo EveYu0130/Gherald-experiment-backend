@@ -51,6 +51,8 @@ public class Change {
     @OneToMany(mappedBy = "change", cascade = CascadeType.ALL)
     private List<ChangeReview> reviews;
 
+    private Boolean practice;
+
     public String getId() {
         return id;
     }
@@ -209,5 +211,13 @@ public class Change {
 
     public void setReviews(List<ChangeReview> reviews) {
         this.reviews = reviews;
+    }
+
+    public Boolean getPractice() {
+        return practice;
+    }
+
+    public void setPractice(Boolean practice) {
+        this.practice = practice;
     }
 }
