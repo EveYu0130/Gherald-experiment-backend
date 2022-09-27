@@ -22,8 +22,9 @@ public class ChangeDto {
     private Integer authorPriorBugs;
     private Float riskScore;
     private Float bugDensity;
+    private Boolean practice;
 
-    public ChangeDto(String id, String repo, String branch, String subject, String created, String updated, Integer insertions, Integer deletions, Integer number, String parent, String commitMsg, String project, Integer authorPriorChanges, Integer authorPriorBugs, Float riskScore, Float bugDensity) {
+    public ChangeDto(String id, String repo, String branch, String subject, String created, String updated, Integer insertions, Integer deletions, Integer number, String parent, String commitMsg, String project, Integer authorPriorChanges, Integer authorPriorBugs, Float riskScore, Float bugDensity, Boolean practice) {
         this.id = id;
         this.repo = repo;
         this.branch = branch;
@@ -40,6 +41,7 @@ public class ChangeDto {
         this.authorPriorBugs = authorPriorBugs;
         this.riskScore = riskScore;
         this.bugDensity = bugDensity;
+        this.practice = practice;
     }
 
     public void setFiles(List<FileDto> files) {
@@ -192,5 +194,13 @@ public class ChangeDto {
 
     public void setBugDensity(Float bugDensity) {
         this.bugDensity = bugDensity;
+    }
+
+    public Boolean getPractice() {
+        return practice;
+    }
+
+    public void setPractice(Boolean practice) {
+        this.practice = practice;
     }
 }

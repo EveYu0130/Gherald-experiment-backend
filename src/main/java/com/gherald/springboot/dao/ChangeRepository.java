@@ -10,4 +10,5 @@ public interface ChangeRepository extends CrudRepository<Change, String> {
     Change findChangeById(String id);
     List<Change> findAllByProject(String project);
 
+    List<Change> findAllByProjectAndPractice(String project, Boolean practice);
 }
