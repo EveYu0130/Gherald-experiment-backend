@@ -1,5 +1,7 @@
 package com.gherald.springboot.controller;
 
+import com.gherald.springboot.dao.LineRepository;
+import com.gherald.springboot.dao.MethodRepository;
 import com.gherald.springboot.dto.*;
 import com.gherald.springboot.model.*;
 import com.gherald.springboot.dao.ParticipantRepository;
@@ -17,11 +19,17 @@ public class ParticipantController {
     private ParticipantRepository participantRepository;
 
     @Autowired
+    private MethodRepository methodRepository;
+
+    @Autowired
+    private LineRepository lineRepository;
+
+    @Autowired
     private ApplicationService applicationService;
 
     @PostMapping("/api/participants/add")
-    public ParticipantDto createParticipant(@RequestParam String tool, @RequestParam String project) {
-        Participant participant = applicationService.createParticipant(tool, project);
+    public ParticipantDto createParticipant(@RequestParam String tool, @RequestParam String project, @RequestParam Integer reviewOrder) {
+        Participant participant = applicationService.createParticipant(tool, project, reviewOrder);
 //        String id = participant.getId();
 //        participant = applicationService.initiateReview(id);
         return convertToDto(participant);
@@ -80,7 +88,7 @@ public class ParticipantController {
                 changeReviews.add(convertToDto(changeReview));
             }
         }
-        ParticipantDto participantDto = new ParticipantDto(participant.getId(), participant.getTool(), participant.getProject(), taskATime, participant.getCompleted(), changeReviews);
+        ParticipantDto participantDto = new ParticipantDto(participant.getId(), participant.getTool(), participant.getProject(), taskATime, participant.getCompleted(), changeReviews, participant.getReviewOrder());
         return participantDto;
     }
 
@@ -93,13 +101,13 @@ public class ParticipantController {
         for (File file : change.getFiles()) {
             FileDto fileDto = new FileDto(file.getFilename(), file.getStatus(), file.getInsertions(), file.getDeletions(), file.getCodeA(), file.getCodeB(), file.getDiff(), file.getPriorBugs(), file.getPriorChanges());
             List<MethodDto> methods = new ArrayList<>();
-            for (Method method : file.getMethods()) {
+            for (Method method : methodRepository.findAllByFileIdAndChangeId(file.getId(), change.getId())) {
                 MethodDto methodDto = new MethodDto(method.getName(), method.getStartLine(), method.getEndLine(), method.getPriorChanges(), method.getPriorBugs());
                 methods.add(methodDto);
             }
             fileDto.setMethods(methods);
             List<LineDto> lines = new ArrayList<>();
-            for (Line line : file.getLines()) {
+            for (Line line : lineRepository.findAllByFileIdAndChangeId(file.getId(), change.getId())) {
                 LineDto lineDto = new LineDto(line.getLineNumber(), line.getCode(), line.getRiskScore());
                 lines.add(lineDto);
             }

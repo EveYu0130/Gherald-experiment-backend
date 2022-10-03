@@ -19,6 +19,9 @@ public class Line {
     @ManyToOne
     private File file;
 
+    @ManyToOne
+    private Change change;
+
     public Integer getId() {
         return id;
     }
@@ -57,5 +60,13 @@ public class Line {
 
     public void setFile(File file) {
         this.file = file;
+    }
+
+    public Change getChange() {
+        return change;
+    }
+
+    public void setChange(Change change) {
+        this.change = change;
     }
 }

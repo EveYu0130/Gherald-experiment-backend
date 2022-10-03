@@ -36,10 +36,11 @@ public class ApplicationService {
     QuestionnaireRepository questionnaireRepository;
 
     @Transactional
-    public Participant createParticipant(String tool, String project) {
+    public Participant createParticipant(String tool, String project, Integer reviewOrder) {
         Participant participant = new Participant();
         participant.setTool(tool);
         participant.setProject(project);
+        participant.setReviewOrder(reviewOrder);
         participant.setCompleted(false);
         participantRepository.save(participant);
         initiateReview(participant.getId());
@@ -53,6 +54,7 @@ public class ApplicationService {
         List<Change> practiceChanges = changeRepository.findAllByProjectAndPractice(project, true);
         List<Change> experimentChanges = changeRepository.findAllByProjectAndPractice(project, false);
         Set<Integer> authorIds = new HashSet<>();
+        Boolean cleanChangeAssigned = false;
         for (Change practiceChange : practiceChanges) {
             ChangeReview changeReview = new ChangeReview();
             changeReview.setChange(practiceChange);
@@ -62,13 +64,16 @@ public class ApplicationService {
         while (authorIds.size() < 3) {
             int randomIndex = new Random().nextInt(experimentChanges.size());
             Change randomChange = experimentChanges.get(randomIndex);
-            if (!authorIds.contains(randomChange.getAuthor().getAccountId())) {
+            if ((!cleanChangeAssigned || (randomChange.getBugDensity() > 0)) && !authorIds.contains(randomChange.getAuthor().getAccountId())) {
                 experimentChanges.remove(randomIndex);
                 ChangeReview changeReview = new ChangeReview();
                 changeReview.setChange(randomChange);
                 changeReview.setParticipant(participant);
                 changeReviewRepository.save(changeReview);
                 authorIds.add(randomChange.getAuthor().getAccountId());
+                if (randomChange.getBugDensity() == 0) {
+                    cleanChangeAssigned = true;
+                }
             }
         }
     }
