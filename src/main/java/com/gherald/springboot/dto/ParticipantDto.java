@@ -16,13 +16,16 @@ public class ParticipantDto {
     private Boolean completed;
     private List<ChangeReviewDto> changeReviews;
 
-    public ParticipantDto(String id, String tool, String project, Integer taskATime, Boolean completed, List<ChangeReviewDto> changeReviews) {
+    private Integer reviewOrder;
+
+    public ParticipantDto(String id, String tool, String project, Integer taskATime, Boolean completed, List<ChangeReviewDto> changeReviews, Integer reviewOrder) {
         this.id = id;
         this.tool = tool;
         this.project = project;
         this.taskATime = taskATime;
         this.completed = completed;
         this.changeReviews = changeReviews;
+        this.reviewOrder = reviewOrder;
     }
 
     public String getId() {
@@ -71,5 +74,13 @@ public class ParticipantDto {
 
     public void setChangeReviews(List<ChangeReviewDto> changeReviews) {
         this.changeReviews = changeReviews;
+    }
+
+    public Integer getReviewOrder() {
+        return reviewOrder;
+    }
+
+    public void setReviewOrder(Integer reviewOrder) {
+        this.reviewOrder = reviewOrder;
     }
 }

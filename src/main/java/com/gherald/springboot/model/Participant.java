@@ -27,6 +27,8 @@ public class Participant {
     @OneToOne(mappedBy = "participant", cascade = CascadeType.ALL)
     private Questionnaire questionnaire;
 
+    private Integer reviewOrder;
+
     public String getId() {
         return id;
     }
@@ -81,5 +83,13 @@ public class Participant {
 
     public void setQuestionnaire(Questionnaire questionnaire) {
         this.questionnaire = questionnaire;
+    }
+
+    public Integer getReviewOrder() {
+        return reviewOrder;
+    }
+
+    public void setReviewOrder(Integer reviewOrder) {
+        this.reviewOrder = reviewOrder;
     }
 }
