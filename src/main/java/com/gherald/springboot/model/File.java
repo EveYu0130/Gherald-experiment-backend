@@ -127,20 +127,4 @@ public class File {
     public void setChange(Change change) {
         this.change = change;
     }
-
-    public List<Method> getMethods() {
-        return methods;
-    }
-
-    public void setMethods(List<Method> methods) {
-        this.methods = methods;
-    }
-
-    public List<Line> getLines() {
-        return lines;
-    }
-
-    public void setLines(List<Line> lines) {
-        this.lines = lines;
-    }
 }

@@ -19,11 +19,15 @@ public class Participant {
 
     private Integer taskATime;
 
+    private Boolean completed;
+
     @OneToMany(mappedBy = "participant", cascade = CascadeType.ALL)
     private List<ChangeReview> changeReviews;
 
     @OneToOne(mappedBy = "participant", cascade = CascadeType.ALL)
     private Questionnaire questionnaire;
+
+    private Integer reviewOrder;
 
     public String getId() {
         return id;
@@ -57,6 +61,14 @@ public class Participant {
         this.taskATime = taskATime;
     }
 
+    public Boolean getCompleted() {
+        return completed;
+    }
+
+    public void setCompleted(Boolean completed) {
+        this.completed = completed;
+    }
+
     public List<ChangeReview> getChangeReviews() {
         return changeReviews;
     }
@@ -71,5 +83,13 @@ public class Participant {
 
     public void setQuestionnaire(Questionnaire questionnaire) {
         this.questionnaire = questionnaire;
+    }
+
+    public Integer getReviewOrder() {
+        return reviewOrder;
+    }
+
+    public void setReviewOrder(Integer reviewOrder) {
+        this.reviewOrder = reviewOrder;
     }
 }

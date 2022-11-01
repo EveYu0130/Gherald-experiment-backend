@@ -1,10 +1,8 @@
 package com.gherald.springboot.controller;
 
-import com.gherald.springboot.dao.FileRepository;
-import com.gherald.springboot.dao.AuthorRepository;
+import com.gherald.springboot.dao.*;
 import com.gherald.springboot.dto.*;
 import com.gherald.springboot.model.*;
-import com.gherald.springboot.dao.ChangeRepository;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +17,12 @@ public class ChangeController {
 
     @Autowired
     private ChangeRepository changeRepository;
+
+    @Autowired
+    private MethodRepository methodRepository;
+
+    @Autowired
+    private LineRepository lineRepository;
 
     @GetMapping("/api/changes")
     public List<ChangeDto> getChanges() {
@@ -46,18 +50,18 @@ public class ChangeController {
 
 
     private ChangeDto convertToDto(Change change) {
-        ChangeDto changeDto = new ChangeDto(change.getId(), change.getRepo(), change.getBranch(), change.getSubject(), change.getCreated(), change.getUpdated(), change.getInsertions(), change.getDeletions(), change.getNumber(), change.getParent(), change.getCommitMsg(), change.getProject(), change.getAuthorPriorChanges(), change.getAuthorPriorBugs(), change.getRiskScore(), change.getBugDensity());
+        ChangeDto changeDto = new ChangeDto(change.getId(), change.getRepo(), change.getBranch(), change.getSubject(), change.getCreated(), change.getUpdated(), change.getInsertions(), change.getDeletions(), change.getNumber(), change.getParent(), change.getCommitMsg(), change.getProject(), change.getAuthorPriorChanges(), change.getAuthorPriorBugs(), change.getRiskScore(), change.getBugDensity(), change.getPractice());
         List<FileDto> files = new ArrayList<>();
         for (File file : change.getFiles()) {
             FileDto fileDto = new FileDto(file.getFilename(), file.getStatus(), file.getInsertions(), file.getDeletions(), file.getCodeA(), file.getCodeB(), file.getDiff(), file.getPriorBugs(), file.getPriorChanges());
             List<MethodDto> methods = new ArrayList<>();
-            for (Method method : file.getMethods()) {
+            for (Method method : methodRepository.findAllByFileIdAndChangeId(file.getId(), change.getId())) {
                 MethodDto methodDto = new MethodDto(method.getName(), method.getStartLine(), method.getEndLine(), method.getPriorChanges(), method.getPriorBugs());
                 methods.add(methodDto);
             }
             fileDto.setMethods(methods);
             List<LineDto> lines = new ArrayList<>();
-            for (Line line : file.getLines()) {
+            for (Line line : lineRepository.findAllByFileIdAndChangeId(file.getId(), change.getId())) {
                 LineDto lineDto = new LineDto(line.getLineNumber(), line.getCode(), line.getRiskScore());
                 lines.add(lineDto);
             }

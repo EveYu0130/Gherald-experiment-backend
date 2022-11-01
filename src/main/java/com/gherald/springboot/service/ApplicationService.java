@@ -12,10 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Service
 public class ApplicationService {
@@ -39,29 +36,78 @@ public class ApplicationService {
     QuestionnaireRepository questionnaireRepository;
 
     @Transactional
-    public Participant createParticipant(String tool, String project) {
+    public Participant createParticipant(String tool, String project, Integer reviewOrder) {
         Participant participant = new Participant();
         participant.setTool(tool);
         participant.setProject(project);
+        participant.setReviewOrder(reviewOrder);
+        participant.setCompleted(false);
         participantRepository.save(participant);
+        initiateReview(participant.getId());
         return participant;
     }
 
     @Transactional
-    public Participant initiateReview(String id) {
+    public Participant createParticipantWithChangeId(String tool, String project, Integer reviewOrder, List<String> changes) {
+        Participant participant = new Participant();
+        participant.setTool(tool);
+        participant.setProject(project);
+        participant.setReviewOrder(reviewOrder);
+        participant.setCompleted(false);
+        participantRepository.save(participant);
+        initiateReviewWithChangeId(participant.getId(), changes);
+        return participant;
+    }
+
+    @Transactional
+    public void initiateReview(String id) {
         Participant participant = participantRepository.findParticipantById(id);
         String project = participant.getProject();
-        List<Change> changes = changeRepository.findAllByProject(project);
-        for (int i = 0; i < 3; i++) {
-            int randomIndex = new Random().nextInt(changes.size());
-            Change randomChange = changes.get(randomIndex);
-            changes.remove(randomIndex);
+        List<Change> practiceChanges = changeRepository.findAllByProjectAndPractice(project, true);
+        List<Change> experimentChanges = changeRepository.findAllByProjectAndPractice(project, false);
+        Set<Integer> authorIds = new HashSet<>();
+        Boolean cleanChangeAssigned = false;
+        for (Change practiceChange : practiceChanges) {
             ChangeReview changeReview = new ChangeReview();
-            changeReview.setChange(randomChange);
+            changeReview.setChange(practiceChange);
             changeReview.setParticipant(participant);
             changeReviewRepository.save(changeReview);
         }
-        return participant;
+        while (authorIds.size() < 3) {
+            int randomIndex = new Random().nextInt(experimentChanges.size());
+            Change randomChange = experimentChanges.get(randomIndex);
+            if ((!cleanChangeAssigned || (randomChange.getBugDensity() > 0)) && !authorIds.contains(randomChange.getAuthor().getAccountId())) {
+                experimentChanges.remove(randomIndex);
+                ChangeReview changeReview = new ChangeReview();
+                changeReview.setChange(randomChange);
+                changeReview.setParticipant(participant);
+                changeReviewRepository.save(changeReview);
+                authorIds.add(randomChange.getAuthor().getAccountId());
+                if (randomChange.getBugDensity() == 0) {
+                    cleanChangeAssigned = true;
+                }
+            }
+        }
+    }
+
+    @Transactional
+    public void initiateReviewWithChangeId(String id, List<String> changes) {
+        Participant participant = participantRepository.findParticipantById(id);
+        String project = participant.getProject();
+        List<Change> practiceChanges = changeRepository.findAllByProjectAndPractice(project, true);
+        for (Change practiceChange : practiceChanges) {
+            ChangeReview changeReview = new ChangeReview();
+            changeReview.setChange(practiceChange);
+            changeReview.setParticipant(participant);
+            changeReviewRepository.save(changeReview);
+        }
+        for (String changeId : changes) {
+            Change change = changeRepository.findChangeById(changeId);
+            ChangeReview changeReview = new ChangeReview();
+            changeReview.setChange(change);
+            changeReview.setParticipant(participant);
+            changeReviewRepository.save(changeReview);
+        }
     }
 
 //    @Transactional
@@ -106,8 +152,10 @@ public class ApplicationService {
 
     @Transactional
     public void createQuestionnaire(QuestionnaireDto questionnaireDto) {
-        if (questionnaireRepository.findQuestionnaireByParticipantId(questionnaireDto.getParticipantId()) == null) {
-            Participant participant = participantRepository.findParticipantById(questionnaireDto.getParticipantId());
+        Participant participant = participantRepository.findParticipantById(questionnaireDto.getParticipantId());
+        participant.setCompleted(true);
+        participantRepository.save(participant);
+        if (questionnaireRepository.findQuestionnaireByParticipantId(participant.getId()) == null) {
             Questionnaire questionnaire = new Questionnaire();
             questionnaire.setUnderstandability(questionnaireDto.getUnderstandability());
             questionnaire.setDifficulty(questionnaireDto.getDifficulty());
