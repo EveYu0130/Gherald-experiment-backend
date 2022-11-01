@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -30,6 +31,15 @@ public class ParticipantController {
     @PostMapping("/api/participants/add")
     public ParticipantDto createParticipant(@RequestParam String tool, @RequestParam String project, @RequestParam Integer reviewOrder) {
         Participant participant = applicationService.createParticipant(tool, project, reviewOrder);
+//        String id = participant.getId();
+//        participant = applicationService.initiateReview(id);
+        return convertToDto(participant);
+    }
+
+    @PostMapping("/api/participants/addWithChange")
+    public ParticipantDto createParticipantWithChangeId(@RequestParam String tool, @RequestParam String project, @RequestParam Integer reviewOrder, @RequestParam String change1, @RequestParam String change2, @RequestParam String change3) {
+        List<String> changes = Arrays.asList(change1, change2, change3);
+        Participant participant = applicationService.createParticipantWithChangeId(tool, project, reviewOrder, changes);
 //        String id = participant.getId();
 //        participant = applicationService.initiateReview(id);
         return convertToDto(participant);
