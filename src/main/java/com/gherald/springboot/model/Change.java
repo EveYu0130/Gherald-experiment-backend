@@ -42,6 +42,22 @@ public class Change {
 
     private Float bugDensity;
 
+    private Float authorRiskScore;
+
+    private Float fileRiskScore;
+
+    private Float methodRiskScore;
+
+    private Float authorPriorChangeScore;
+
+    private Float authorRecentChangeScore;
+
+    private Float authorFileAwareness;
+
+    private Float authorRecentChanges;
+
+    private Integer authorFilePriorChanges;
+
     @OneToMany(mappedBy = "change", cascade = CascadeType.ALL)
     private List<File> files;
 
@@ -219,5 +235,69 @@ public class Change {
 
     public void setPractice(Boolean practice) {
         this.practice = practice;
+    }
+
+    public Float getAuthorRiskScore() {
+        return authorRiskScore;
+    }
+
+    public void setAuthorRiskScore(Float authorRiskScore) {
+        this.authorRiskScore = authorRiskScore;
+    }
+
+    public Float getFileRiskScore() {
+        return fileRiskScore;
+    }
+
+    public void setFileRiskScore(Float fileRiskScore) {
+        this.fileRiskScore = fileRiskScore;
+    }
+
+    public Float getMethodRiskScore() {
+        return methodRiskScore;
+    }
+
+    public void setMethodRiskScore(Float methodRiskScore) {
+        this.methodRiskScore = methodRiskScore;
+    }
+
+    public Float getAuthorPriorChangeScore() {
+        return authorPriorChangeScore;
+    }
+
+    public void setAuthorPriorChangeScore(Float authorPriorChangeScore) {
+        this.authorPriorChangeScore = authorPriorChangeScore;
+    }
+
+    public Float getAuthorRecentChangeScore() {
+        return authorRecentChangeScore;
+    }
+
+    public void setAuthorRecentChangeScore(Float authorRecentChangeScore) {
+        this.authorRecentChangeScore = authorRecentChangeScore;
+    }
+
+    public Float getAuthorFileAwareness() {
+        return authorFileAwareness;
+    }
+
+    public void setAuthorFileAwareness(Float authorFileAwareness) {
+        this.authorFileAwareness = authorFileAwareness;
+    }
+
+    public Float getAuthorRecentChanges() {
+        return authorRecentChanges;
+    }
+
+    public void setAuthorRecentChanges(Float authorRecentChanges) {
+        this.authorRecentChanges = authorRecentChanges;
+    }
+
+    public Integer getAuthorFilePriorChanges() {
+        return authorFilePriorChanges;
+    }
+
+    public void setAuthorFilePriorChanges(Integer authorFilePriorChanges) {
+        this.authorFilePriorChanges = authorFilePriorChanges;
     }
 }
