@@ -16,6 +16,9 @@ public class Line {
 
     private Float riskScore;
 
+    @Column(columnDefinition = "LONGTEXT")
+    private String riskTokens;
+
     @ManyToOne
     private File file;
 
@@ -52,6 +55,14 @@ public class Line {
 
     public void setRiskScore(Float riskScore) {
         this.riskScore = riskScore;
+    }
+
+    public String getRiskTokens() {
+        return riskTokens;
+    }
+
+    public void setRiskTokens(String riskTokens) {
+        this.riskTokens = riskTokens;
     }
 
     public File getFile() {

@@ -8,10 +8,13 @@ public class LineDto {
 
     private Float riskScore;
 
-    public LineDto(Integer lineNumber, String code, Float riskScore) {
+    private String riskTokens;
+
+    public LineDto(Integer lineNumber, String code, Float riskScore, String riskTokens) {
         this.lineNumber = lineNumber;
         this.code = code;
         this.riskScore = riskScore;
+        this.riskTokens = riskTokens;
     }
 
     public Integer getLineNumber() {
@@ -36,5 +39,13 @@ public class LineDto {
 
     public void setRiskScore(Float riskScore) {
         this.riskScore = riskScore;
+    }
+
+    public String getRiskTokens() {
+        return riskTokens;
+    }
+
+    public void setRiskTokens(String riskTokens) {
+        this.riskTokens = riskTokens;
     }
 }

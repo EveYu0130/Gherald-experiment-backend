@@ -68,7 +68,7 @@ public class ChangeController {
             fileDto.setMethods(methods);
             List<LineDto> lines = new ArrayList<>();
             for (Line line : lineRepository.findAllByFileIdAndChangeId(file.getId(), change.getId())) {
-                LineDto lineDto = new LineDto(line.getLineNumber(), line.getCode(), line.getRiskScore());
+                LineDto lineDto = new LineDto(line.getLineNumber(), line.getCode(), line.getRiskScore(), line.getRiskTokens());
                 lines.add(lineDto);
             }
             fileDto.setLines(lines);
