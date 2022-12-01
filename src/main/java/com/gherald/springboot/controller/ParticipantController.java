@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RestController
@@ -30,6 +31,15 @@ public class ParticipantController {
     @PostMapping("/api/participants/add")
     public ParticipantDto createParticipant(@RequestParam String tool, @RequestParam String project, @RequestParam Integer reviewOrder) {
         Participant participant = applicationService.createParticipant(tool, project, reviewOrder);
+//        String id = participant.getId();
+//        participant = applicationService.initiateReview(id);
+        return convertToDto(participant);
+    }
+
+    @PostMapping("/api/participants/addWithChange")
+    public ParticipantDto createParticipantWithChangeId(@RequestParam String tool, @RequestParam String project, @RequestParam Integer reviewOrder, @RequestParam String change1, @RequestParam String change2, @RequestParam String change3) {
+        List<String> changes = Arrays.asList(change1, change2, change3);
+        Participant participant = applicationService.createParticipantWithChangeId(tool, project, reviewOrder, changes);
 //        String id = participant.getId();
 //        participant = applicationService.initiateReview(id);
         return convertToDto(participant);
@@ -96,7 +106,13 @@ public class ParticipantController {
         if (change == null) {
             return null;
         }
-        ChangeDto changeDto = new ChangeDto(change.getId(), change.getRepo(), change.getBranch(), change.getSubject(), change.getCreated(), change.getUpdated(), change.getInsertions(), change.getDeletions(), change.getNumber(), change.getParent(), change.getCommitMsg(), change.getProject(), change.getAuthorPriorChanges(), change.getAuthorPriorBugs(), change.getRiskScore(), change.getBugDensity(), change.getPractice());
+        ChangeDto changeDto = new ChangeDto(change.getId(), change.getRepo(), change.getBranch(), change.getSubject(),
+                change.getCreated(), change.getUpdated(), change.getInsertions(), change.getDeletions(),
+                change.getNumber(), change.getParent(), change.getCommitMsg(), change.getProject(),
+                change.getAuthorPriorChanges(), change.getAuthorPriorBugs(), change.getRiskScore(),
+                change.getBugDensity(), change.getPractice(), change.getAuthorRiskScore(), change.getFileRiskScore(),
+                change.getMethodRiskScore(), change.getAuthorPriorChangeScore(), change.getAuthorRecentChangeScore(),
+                change.getAuthorFileAwareness(), change.getAuthorRecentChanges(), change.getAuthorFilePriorChanges());
         List<FileDto> files = new ArrayList<>();
         for (File file : change.getFiles()) {
             FileDto fileDto = new FileDto(file.getFilename(), file.getStatus(), file.getInsertions(), file.getDeletions(), file.getCodeA(), file.getCodeB(), file.getDiff(), file.getPriorBugs(), file.getPriorChanges());
@@ -108,7 +124,7 @@ public class ParticipantController {
             fileDto.setMethods(methods);
             List<LineDto> lines = new ArrayList<>();
             for (Line line : lineRepository.findAllByFileIdAndChangeId(file.getId(), change.getId())) {
-                LineDto lineDto = new LineDto(line.getLineNumber(), line.getCode(), line.getRiskScore());
+                LineDto lineDto = new LineDto(line.getLineNumber(), line.getCode(), line.getRiskScore(), line.getRiskTokens());
                 lines.add(lineDto);
             }
             fileDto.setLines(lines);

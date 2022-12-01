@@ -48,6 +48,18 @@ public class ApplicationService {
     }
 
     @Transactional
+    public Participant createParticipantWithChangeId(String tool, String project, Integer reviewOrder, List<String> changes) {
+        Participant participant = new Participant();
+        participant.setTool(tool);
+        participant.setProject(project);
+        participant.setReviewOrder(reviewOrder);
+        participant.setCompleted(false);
+        participantRepository.save(participant);
+        initiateReviewWithChangeId(participant.getId(), changes);
+        return participant;
+    }
+
+    @Transactional
     public void initiateReview(String id) {
         Participant participant = participantRepository.findParticipantById(id);
         String project = participant.getProject();
@@ -75,6 +87,26 @@ public class ApplicationService {
                     cleanChangeAssigned = true;
                 }
             }
+        }
+    }
+
+    @Transactional
+    public void initiateReviewWithChangeId(String id, List<String> changes) {
+        Participant participant = participantRepository.findParticipantById(id);
+        String project = participant.getProject();
+        List<Change> practiceChanges = changeRepository.findAllByProjectAndPractice(project, true);
+        for (Change practiceChange : practiceChanges) {
+            ChangeReview changeReview = new ChangeReview();
+            changeReview.setChange(practiceChange);
+            changeReview.setParticipant(participant);
+            changeReviewRepository.save(changeReview);
+        }
+        for (String changeId : changes) {
+            Change change = changeRepository.findChangeById(changeId);
+            ChangeReview changeReview = new ChangeReview();
+            changeReview.setChange(change);
+            changeReview.setParticipant(participant);
+            changeReviewRepository.save(changeReview);
         }
     }
 
