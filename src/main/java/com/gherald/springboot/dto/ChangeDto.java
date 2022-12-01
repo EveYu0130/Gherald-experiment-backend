@@ -24,7 +24,28 @@ public class ChangeDto {
     private Float bugDensity;
     private Boolean practice;
 
-    public ChangeDto(String id, String repo, String branch, String subject, String created, String updated, Integer insertions, Integer deletions, Integer number, String parent, String commitMsg, String project, Integer authorPriorChanges, Integer authorPriorBugs, Float riskScore, Float bugDensity, Boolean practice) {
+    private Float authorRiskScore;
+
+    private Float fileRiskScore;
+
+    private Float methodRiskScore;
+
+    private Float authorPriorChangeScore;
+
+    private Float authorRecentChangeScore;
+
+    private Float authorFileAwareness;
+
+    private Float authorRecentChanges;
+
+    private Integer authorFilePriorChanges;
+
+    public ChangeDto(String id, String repo, String branch, String subject, String created, String updated,
+                     Integer insertions, Integer deletions, Integer number, String parent, String commitMsg,
+                     String project, Integer authorPriorChanges, Integer authorPriorBugs, Float riskScore,
+                     Float bugDensity, Boolean practice, Float authorRiskScore, Float fileRiskScore, Float methodRiskScore,
+                     Float authorPriorChangeScore, Float authorRecentChangeScore, Float authorFileAwareness, Float authorRecentChanges,
+                     Integer authorFilePriorChanges) {
         this.id = id;
         this.repo = repo;
         this.branch = branch;
@@ -42,6 +63,14 @@ public class ChangeDto {
         this.riskScore = riskScore;
         this.bugDensity = bugDensity;
         this.practice = practice;
+        this.authorRiskScore = authorRiskScore;
+        this.fileRiskScore = fileRiskScore;
+        this.methodRiskScore = methodRiskScore;
+        this.authorPriorChangeScore = authorPriorChangeScore;
+        this.authorRecentChangeScore = authorRecentChangeScore;
+        this.authorFileAwareness = authorFileAwareness;
+        this.authorRecentChanges = authorRecentChanges;
+        this.authorFilePriorChanges = authorFilePriorChanges;
     }
 
     public void setFiles(List<FileDto> files) {
@@ -202,5 +231,69 @@ public class ChangeDto {
 
     public void setPractice(Boolean practice) {
         this.practice = practice;
+    }
+
+    public Float getAuthorRiskScore() {
+        return authorRiskScore;
+    }
+
+    public void setAuthorRiskScore(Float authorRiskScore) {
+        this.authorRiskScore = authorRiskScore;
+    }
+
+    public Float getFileRiskScore() {
+        return fileRiskScore;
+    }
+
+    public void setFileRiskScore(Float fileRiskScore) {
+        this.fileRiskScore = fileRiskScore;
+    }
+
+    public Float getMethodRiskScore() {
+        return methodRiskScore;
+    }
+
+    public void setMethodRiskScore(Float methodRiskScore) {
+        this.methodRiskScore = methodRiskScore;
+    }
+
+    public Float getAuthorPriorChangeScore() {
+        return authorPriorChangeScore;
+    }
+
+    public void setAuthorPriorChangeScore(Float authorPriorChangeScore) {
+        this.authorPriorChangeScore = authorPriorChangeScore;
+    }
+
+    public Float getAuthorRecentChangeScore() {
+        return authorRecentChangeScore;
+    }
+
+    public void setAuthorRecentChangeScore(Float authorRecentChangeScore) {
+        this.authorRecentChangeScore = authorRecentChangeScore;
+    }
+
+    public Float getAuthorFileAwareness() {
+        return authorFileAwareness;
+    }
+
+    public void setAuthorFileAwareness(Float authorFileAwareness) {
+        this.authorFileAwareness = authorFileAwareness;
+    }
+
+    public Float getAuthorRecentChanges() {
+        return authorRecentChanges;
+    }
+
+    public void setAuthorRecentChanges(Float authorRecentChanges) {
+        this.authorRecentChanges = authorRecentChanges;
+    }
+
+    public Integer getAuthorFilePriorChanges() {
+        return authorFilePriorChanges;
+    }
+
+    public void setAuthorFilePriorChanges(Integer authorFilePriorChanges) {
+        this.authorFilePriorChanges = authorFilePriorChanges;
     }
 }
