@@ -23,7 +23,7 @@ public class SpringbootApplication {
 		return new WebMvcConfigurer() {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
-				registry.addMapping("/api/*").allowedOrigins("http://swag.cs.uwaterloo.ca");
+				registry.addMapping("/**").allowedOrigins("http://swag.cs.uwaterloo.ca");
 			}
 		};
 	}
