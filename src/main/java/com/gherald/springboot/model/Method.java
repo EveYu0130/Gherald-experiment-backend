@@ -9,6 +9,7 @@ public class Method {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
+    @Column(columnDefinition = "LONGTEXT")
     private String name;
 
     private Integer startLine;
